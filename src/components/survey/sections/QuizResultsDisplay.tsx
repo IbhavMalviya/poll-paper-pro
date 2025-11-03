@@ -10,18 +10,54 @@ interface QuizResultsDisplayProps {
 
 const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
   const quizFields = [
-    { key: "quizDataUsageImpact", label: "Data Usage Impact", actualKey: "calculatedStreamingCo2" },
-    { key: "quizDeviceLifespanImpact", label: "Device Lifespan Impact", actualKey: "calculatedDevicesCo2" },
-    { key: "quizChargingHabitsImpact", label: "Charging Habits Impact", actualKey: "calculatedDevicesCo2" },
-    { key: "quizStreamingGamingImpact", label: "Streaming/Gaming Impact", actualKey: "calculatedStreamingCo2" },
-    { key: "quizRenewableEnergyImpact", label: "Renewable Energy Impact", actualKey: "calculatedTotalCo2" },
-    { key: "quizAiUsageImpact", label: "AI Usage Impact", actualKey: "calculatedAiCo2" },
+    { 
+      key: "quizDataUsageImpact", 
+      label: "Data Usage Impact", 
+      actualKey: "calculatedStreamingCo2",
+      // Average streaming: 0.1-0.5 kg CO2/day, scale: <0.15=low, 0.15-0.35=medium, >0.35=high
+      scaleFunc: (val: number) => val < 0.15 ? 3 : val < 0.35 ? 6 : 9
+    },
+    { 
+      key: "quizDeviceLifespanImpact", 
+      label: "Device Lifespan Impact", 
+      actualKey: "calculatedDevicesCo2",
+      // Device manufacturing/usage: 0.5-2 kg CO2/day, scale: <0.8=low, 0.8-1.5=medium, >1.5=high
+      scaleFunc: (val: number) => val < 0.8 ? 3 : val < 1.5 ? 6 : 9
+    },
+    { 
+      key: "quizChargingHabitsImpact", 
+      label: "Charging Habits Impact", 
+      actualKey: "calculatedDevicesCo2",
+      // Similar to device impact
+      scaleFunc: (val: number) => val < 0.8 ? 3 : val < 1.5 ? 6 : 9
+    },
+    { 
+      key: "quizStreamingGamingImpact", 
+      label: "Streaming/Gaming Impact", 
+      actualKey: "calculatedStreamingCo2",
+      // Same as data usage
+      scaleFunc: (val: number) => val < 0.15 ? 3 : val < 0.35 ? 6 : 9
+    },
+    { 
+      key: "quizRenewableEnergyImpact", 
+      label: "Renewable Energy Impact", 
+      actualKey: "calculatedTotalCo2",
+      // Total daily: 1-5 kg CO2/day, scale: <2=low, 2-3.5=medium, >3.5=high
+      scaleFunc: (val: number) => val < 2 ? 3 : val < 3.5 ? 6 : 9
+    },
+    { 
+      key: "quizAiUsageImpact", 
+      label: "AI Usage Impact", 
+      actualKey: "calculatedAiCo2",
+      // AI usage: 0.05-0.3 kg CO2/day, scale: <0.1=low, 0.1-0.2=medium, >0.2=high
+      scaleFunc: (val: number) => val < 0.1 ? 3 : val < 0.2 ? 6 : 9
+    },
   ];
 
-  const normalizeActualImpact = (value: number, maxValue: number) => {
-    // Normalize actual CO2 values to a 1-10 scale
-    if (maxValue === 0) return 0;
-    return Math.min(10, Math.max(1, Math.round((value / maxValue) * 10)));
+  const normalizeActualImpact = (value: number, scaleFunc: (val: number) => number) => {
+    // Convert daily kg CO2 to impact score using real-world thresholds
+    if (value === 0) return 1;
+    return scaleFunc(value);
   };
 
   const getComparisonIcon = (predicted: number, actual: number) => {
@@ -91,8 +127,7 @@ const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
           {quizFields.map((field) => {
             const predictedValue = Number(surveyData[field.key as keyof SurveyData]) || 0;
             const actualCo2 = Number(surveyData[field.actualKey as keyof SurveyData]) || 0;
-            const totalCo2 = Number(surveyData.calculatedTotalCo2) || 1;
-            const actualNormalized = normalizeActualImpact(actualCo2, totalCo2 / 3);
+            const actualNormalized = normalizeActualImpact(actualCo2, field.scaleFunc);
             const comparisonText = getComparisonText(predictedValue, actualNormalized);
             const comparisonIcon = getComparisonIcon(predictedValue, actualNormalized);
             
@@ -112,7 +147,7 @@ const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
                   </div>
                   <Progress value={predictedValue * 10} className="h-2" />
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Actual Impact</span>
+                    <span>Actual Impact ({actualCo2.toFixed(2)} kg/day)</span>
                     <span className="font-semibold">{actualNormalized}/10</span>
                   </div>
                   <Progress value={actualNormalized * 10} className="h-2 [&>div]:bg-primary/60" />
