@@ -23,15 +23,26 @@ const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFor
     setCarbonFootprint(footprint);
     
     // Store calculated values in survey data
-    setSurveyData({
+    const updatedData = {
       ...surveyData,
       calculatedTotalCo2: footprint.total,
       calculatedDevicesCo2: footprint.devices,
       calculatedStreamingCo2: footprint.streaming,
       calculatedAiCo2: footprint.ai,
       calculatedChargingCo2: footprint.charging,
-    });
-  }, [surveyData.devices, surveyData.primaryChargingHabits, surveyData.primaryPowerSource, surveyData.streamingAcademicHours, surveyData.streamingEntertainmentHours, surveyData.cloudServicesUsageHours, surveyData.aiInteractionsPerDay, surveyData.typicalAiSessionLength, surveyData.typeOfAiUsage, setCarbonFootprint]);
+    };
+    
+    // Only update if values changed to avoid infinite loops
+    if (
+      surveyData.calculatedTotalCo2 !== footprint.total ||
+      surveyData.calculatedDevicesCo2 !== footprint.devices ||
+      surveyData.calculatedStreamingCo2 !== footprint.streaming ||
+      surveyData.calculatedAiCo2 !== footprint.ai ||
+      surveyData.calculatedChargingCo2 !== footprint.charging
+    ) {
+      setSurveyData(updatedData);
+    }
+  }, [surveyData, setCarbonFootprint, setSurveyData]);
 
   const updateData = (field: string, value: any) => {
     setSurveyData({ ...surveyData, [field]: value });
