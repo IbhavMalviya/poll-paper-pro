@@ -21,7 +21,17 @@ const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFor
   useEffect(() => {
     const footprint = calculateCarbonFootprint(surveyData);
     setCarbonFootprint(footprint);
-  }, [surveyData, setCarbonFootprint]);
+    
+    // Store calculated values in survey data
+    setSurveyData({
+      ...surveyData,
+      calculatedTotalCo2: footprint.total,
+      calculatedDevicesCo2: footprint.devices,
+      calculatedStreamingCo2: footprint.streaming,
+      calculatedAiCo2: footprint.ai,
+      calculatedChargingCo2: footprint.charging,
+    });
+  }, [surveyData.devices, surveyData.primaryChargingHabits, surveyData.primaryPowerSource, surveyData.streamingAcademicHours, surveyData.streamingEntertainmentHours, surveyData.cloudServicesUsageHours, surveyData.aiInteractionsPerDay, surveyData.typicalAiSessionLength, surveyData.typeOfAiUsage, setCarbonFootprint]);
 
   const updateData = (field: string, value: any) => {
     setSurveyData({ ...surveyData, [field]: value });

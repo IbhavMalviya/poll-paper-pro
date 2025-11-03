@@ -59,4 +59,5 @@ export interface SurveyData {
   calculatedDevicesCo2: number;
   calculatedStreamingCo2: number;
   calculatedAiCo2: number;
+  calculatedChargingCo2: number;
 }

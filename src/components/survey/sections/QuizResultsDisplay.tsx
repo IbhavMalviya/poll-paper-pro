@@ -27,9 +27,9 @@ const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
     { 
       key: "quizChargingHabitsImpact", 
       label: "Charging Habits Impact", 
-      actualKey: "calculatedDevicesCo2",
-      // Similar to device impact
-      scaleFunc: (val: number) => val < 0.8 ? 3 : val < 1.5 ? 6 : 9
+      actualKey: "calculatedChargingCo2",
+      // Charging: 0.1-0.5 kg CO2/day, scale: <0.15=low, 0.15-0.3=medium, >0.3=high
+      scaleFunc: (val: number) => val < 0.15 ? 3 : val < 0.3 ? 6 : 9
     },
     { 
       key: "quizStreamingGamingImpact", 

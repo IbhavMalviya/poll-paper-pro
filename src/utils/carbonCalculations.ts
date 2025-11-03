@@ -130,7 +130,9 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   
   // Apply multipliers to device usage emissions and calculate daily charging impact
   const dailyDeviceCo2 = devicesCo2 / 365;
-  chargingCo2 = dailyDeviceCo2 * (chargingMultiplier - 1) * powerMultiplier;
+  // Base charging emissions (20% of device power consumption) + habit multiplier effect
+  const baseChargingCo2 = dailyDeviceCo2 * 0.2;
+  chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier;
 
   const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2;
 
