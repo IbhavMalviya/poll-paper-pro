@@ -20,6 +20,7 @@ export type Database = {
           ai_interactions_per_day: string | null
           avg_daily_internet_hours: number | null
           calculated_ai_co2: number | null
+          calculated_charging_co2: number | null
           calculated_devices_co2: number | null
           calculated_streaming_co2: number | null
           calculated_total_co2: number | null
@@ -63,6 +64,7 @@ export type Database = {
           ai_interactions_per_day?: string | null
           avg_daily_internet_hours?: number | null
           calculated_ai_co2?: number | null
+          calculated_charging_co2?: number | null
           calculated_devices_co2?: number | null
           calculated_streaming_co2?: number | null
           calculated_total_co2?: number | null
@@ -106,6 +108,7 @@ export type Database = {
           ai_interactions_per_day?: string | null
           avg_daily_internet_hours?: number | null
           calculated_ai_co2?: number | null
+          calculated_charging_co2?: number | null
           calculated_devices_co2?: number | null
           calculated_streaming_co2?: number | null
           calculated_total_co2?: number | null

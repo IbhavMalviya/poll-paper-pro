@@ -105,6 +105,7 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
         calculated_devices_co2: footprint.devices,
         calculated_streaming_co2: footprint.streaming,
         calculated_ai_co2: footprint.ai,
+        calculated_charging_co2: footprint.charging,
         raw_data: surveyData as any,
       }]);
 
