@@ -90,3 +90,36 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .floating-element {
+    animation: float 20s ease-in-out infinite;
+  }
+  
+  .floating-element-slow {
+    animation: float 30s ease-in-out infinite;
+  }
+  
+  .floating-element-fast {
+    animation: float 15s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translate(30px, -30px) rotate(5deg);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translate(-20px, -60px) rotate(-5deg);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translate(-40px, -30px) rotate(3deg);
+      opacity: 0.6;
+    }
+  }
+}
