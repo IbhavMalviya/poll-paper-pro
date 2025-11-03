@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyData } from "@/types/survey";
 import { calculateCarbonFootprint } from "@/utils/carbonCalculations";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Shield, Lock, UserX, Server, Download, Globe, Heart } from "lucide-react";
 
 interface SubmitSectionProps {
   surveyData: Partial<SurveyData>;
@@ -95,6 +97,66 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
   return (
     <Card style={{ boxShadow: 'var(--shadow-card)' }}>
       <CardContent className="pt-6">
+        <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="flex items-center gap-2 mb-3">
+            <Heart className="w-5 h-5 text-primary" />
+            <h3 className="font-semibold text-lg">💚 Your responses help researchers understand digital behavior patterns and promote sustainable technology use!</h3>
+          </div>
+          
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="privacy-info" className="border-none">
+              <AccordionTrigger className="text-sm font-medium hover:no-underline py-2">
+                📋 Data Privacy & Research Information (Click to expand)
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-3 text-sm text-muted-foreground pt-2">
+                  <div className="flex items-start gap-3">
+                    <Lock className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">Your Privacy Matters:</strong> All data collected is completely anonymized and encrypted. We use industry-standard security protocols to protect your information.
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Globe className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">Research Purpose:</strong> This data is used exclusively for academic research on digital sustainability and carbon footprint awareness. It helps researchers understand technology usage patterns and promote eco-friendly digital habits.
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <UserX className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">No Personal Identity:</strong> We do not collect names, email addresses, IP addresses, or any personally identifiable information. Your responses are completely anonymous.
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Server className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">Secure Storage:</strong> Your data is stored on secure, encrypted servers with restricted access. Only authorized researchers can access the anonymized dataset for analysis.
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Download className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">Voluntary Participation:</strong> Your participation is completely voluntary. You can download a copy of your responses before submitting using the "Download JSON" button.
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Shield className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                    <div>
+                      <strong className="text-foreground">Making an Impact:</strong> Your contribution helps promote sustainable technology practices and raises awareness about digital carbon footprints. Thank you for participating in this important research!
+                    </div>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+
         <div className="flex items-start gap-3 mb-6">
           <Checkbox
             id="consent"
@@ -102,7 +164,7 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
             onCheckedChange={(checked) => updateData("researchConsent", checked)}
           />
           <Label htmlFor="consent" className="cursor-pointer">
-            I consent to participating in this research.
+            I have read the privacy information above and consent to participating in this research.
           </Label>
         </div>
 
