@@ -13,7 +13,7 @@ import { calculateCarbonFootprint } from "@/utils/carbonCalculations";
 interface SurveyFormProps {
   surveyData: Partial<SurveyData>;
   setSurveyData: (data: Partial<SurveyData>) => void;
-  setCarbonFootprint: (footprint: { total: number; devices: number; streaming: number; ai: number }) => void;
+  setCarbonFootprint: (footprint: { total: number; devices: number; streaming: number; ai: number; charging: number }) => void;
 }
 
 const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFormProps) => {

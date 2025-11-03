@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { SurveyData } from "@/types/survey";
+import SustainabilityResultsDisplay from "./SustainabilityResultsDisplay";
 
 interface SustainabilitySectionProps {
   surveyData: Partial<SurveyData>;
@@ -63,6 +64,10 @@ const SustainabilitySection = ({ surveyData, updateData }: SustainabilitySection
           </AlertDescription>
         </Alert>
       </CardContent>
+      
+      <div className="px-6 pb-6">
+        <SustainabilityResultsDisplay surveyData={surveyData} />
+      </div>
     </>
   );
 };

@@ -12,6 +12,7 @@ const Index = () => {
     devices: 0,
     streaming: 0,
     ai: 0,
+    charging: 0,
   });
 
   return (

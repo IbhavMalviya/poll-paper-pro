@@ -50,13 +50,14 @@ const InternetDevicesSection = ({ surveyData, updateData }: InternetDevicesSecti
               onValueChange={(value) => updateData("primaryInternetConnection", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select" />
+                <SelectValue placeholder="Select connection type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Fiber">Fiber</SelectItem>
-                <SelectItem value="Broadband">Broadband</SelectItem>
-                <SelectItem value="Mobile Data">Mobile Data</SelectItem>
+                <SelectItem value="Fiber Broadband">Fiber Broadband</SelectItem>
+                <SelectItem value="Mobile Data (4G/5G)">Mobile Data (4G/5G)</SelectItem>
+                <SelectItem value="Cable/DSL">Cable/DSL</SelectItem>
                 <SelectItem value="Satellite">Satellite</SelectItem>
+                <SelectItem value="Mixed usage">Mixed usage</SelectItem>
               </SelectContent>
             </Select>
           </div>

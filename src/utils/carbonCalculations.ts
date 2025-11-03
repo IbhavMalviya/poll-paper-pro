@@ -4,6 +4,7 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   let devicesCo2 = 0;
   let streamingCo2 = 0;
   let aiCo2 = 0;
+  let chargingCo2 = 0;
 
   // Device emissions calculation
   if (data.devices && data.devices.length > 0) {
@@ -62,10 +63,10 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
 
   const academicHours = streamingHoursMap[data.streamingAcademicHours || "None"] || 0;
   const entertainmentHours = streamingHoursMap[data.streamingEntertainmentHours || "None"] || 0;
-  const totalStreamingHours = (academicHours + entertainmentHours) * 52; // Weekly to annual
+  const totalStreamingHours = academicHours + entertainmentHours; // Weekly hours
   
-  // 0.055 kg CO2 per hour of HD streaming
-  streamingCo2 += totalStreamingHours * 0.055;
+  // 0.055 kg CO2 per hour of HD streaming, divided by 7 for daily
+  streamingCo2 += (totalStreamingHours * 0.055) / 7;
 
   // Cloud usage
   const cloudHoursMap: Record<string, number> = {
@@ -78,7 +79,7 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   };
   
   const cloudHours = cloudHoursMap[data.cloudServicesUsageHours || "None"] || 0;
-  streamingCo2 += cloudHours * 52 * 0.02; // kg CO2 per hour
+  streamingCo2 += (cloudHours * 0.02) / 7; // kg CO2 per hour, weekly to daily
 
   // AI emissions
   const aiInteractionsMap: Record<string, number> = {
@@ -105,14 +106,39 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   
   // 0.002 kg CO2 per AI interaction (text), more for images
   const typeMultiplier = data.typeOfAiUsage?.includes("Image") ? 5 : 1;
-  aiCo2 += aiInteractions * 365 * 0.002 * sessionMultiplier * typeMultiplier;
+  aiCo2 += aiInteractions * 0.002 * sessionMultiplier * typeMultiplier;
 
-  const total = devicesCo2 + streamingCo2 + aiCo2;
+  // Charging habits and power source impact
+  const chargingHabitsMultiplier: Record<string, number> = {
+    "Charge overnight regularly": 1.3,
+    "Charge when battery is low (below 20%)": 1.0,
+    "Keep devices plugged in most of the time": 1.5,
+    "Use fast charging frequently": 1.2,
+    "Charge multiple times a day": 1.4,
+  };
+
+  const powerSourceMultiplier: Record<string, number> = {
+    "Grid electricity": 1.0,
+    "Solar power": 0.1,
+    "Mixed (Grid + Solar)": 0.5,
+    "Generator": 1.8,
+    "Inverter/UPS (Battery backup)": 1.2,
+  };
+
+  const chargingMultiplier = chargingHabitsMultiplier[data.primaryChargingHabits || ""] || 1.0;
+  const powerMultiplier = powerSourceMultiplier[data.primaryPowerSource || "Grid electricity"] || 1.0;
+  
+  // Apply multipliers to device usage emissions and calculate daily charging impact
+  const dailyDeviceCo2 = devicesCo2 / 365;
+  chargingCo2 = dailyDeviceCo2 * (chargingMultiplier - 1) * powerMultiplier;
+
+  const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2;
 
   return {
     total,
-    devices: devicesCo2,
+    devices: dailyDeviceCo2,
     streaming: streamingCo2,
     ai: aiCo2,
+    charging: chargingCo2,
   };
 };

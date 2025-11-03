@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SurveyData } from "@/types/survey";
 import { Smartphone } from "lucide-react";
+import QuizResultsDisplay from "./QuizResultsDisplay";
 
 interface CarbonQuizSectionProps {
   surveyData: Partial<SurveyData>;
@@ -79,6 +80,10 @@ const CarbonQuizSection = ({ surveyData, updateData }: CarbonQuizSectionProps) =
           </div>
         ))}
       </CardContent>
+      
+      <div className="px-6 pb-6">
+        <QuizResultsDisplay surveyData={surveyData} />
+      </div>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Monitor, Upload, Brain } from "lucide-react";
+import { Monitor, Cloud, Sparkles, Battery } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CarbonFootprintDisplayProps {
@@ -7,51 +7,52 @@ interface CarbonFootprintDisplayProps {
     devices: number;
     streaming: number;
     ai: number;
+    charging: number;
   };
 }
 
 const CarbonFootprintDisplay = ({ carbonFootprint }: CarbonFootprintDisplayProps) => {
   return (
-    <Card className="sticky top-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-      <CardHeader className="bg-gradient-to-br from-muted/30 to-background">
-        <CardTitle className="text-lg">Total Annual Footprint</CardTitle>
+    <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 sticky top-6" style={{ boxShadow: 'var(--shadow-card)' }}>
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-center">
+          Your Estimated Daily Carbon Footprint
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 pt-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Monitor className="w-5 h-5 text-primary" />
-            <p className="text-3xl font-bold">
-              {carbonFootprint.total.toFixed(0)} kg CO<sub>2</sub>
-            </p>
+      <CardContent className="space-y-6">
+        <div className="text-center space-y-2">
+          <div className="text-5xl font-bold text-primary">
+            {carbonFootprint.total.toFixed(2)} kg
           </div>
+          <p className="text-muted-foreground">CO₂ per day</p>
           <p className="text-sm text-muted-foreground">
-            Approx. ₹{(carbonFootprint.total * 3).toFixed(0)} (at ₹3000/tCO₂)
+            Estimated annual: {Math.round(carbonFootprint.total * 365)} kg CO₂ (₹{Math.round(carbonFootprint.total * 365 * 3)})
           </p>
         </div>
 
-        <div className="space-y-4 pt-4 border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Monitor className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">Devices</span>
-            </div>
-            <span className="text-sm font-bold">{carbonFootprint.devices.toFixed(0)} kg</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="flex flex-col items-center gap-2 p-4 bg-background/50 rounded-lg">
+            <Monitor className="w-6 h-6 text-primary" />
+            <p className="text-xs text-muted-foreground text-center">Devices</p>
+            <p className="text-base font-semibold">{carbonFootprint.devices.toFixed(2)} kg</p>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Upload className="w-4 h-4 text-secondary" />
-              <span className="text-sm font-medium">Data & Streaming</span>
-            </div>
-            <span className="text-sm font-bold">{carbonFootprint.streaming.toFixed(0)} kg</span>
+          <div className="flex flex-col items-center gap-2 p-4 bg-background/50 rounded-lg">
+            <Battery className="w-6 h-6 text-primary" />
+            <p className="text-xs text-muted-foreground text-center">Charging</p>
+            <p className="text-base font-semibold">{carbonFootprint.charging.toFixed(2)} kg</p>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Brain className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium">AI</span>
-            </div>
-            <span className="text-sm font-bold">{carbonFootprint.ai.toFixed(0)} kg</span>
+          <div className="flex flex-col items-center gap-2 p-4 bg-background/50 rounded-lg">
+            <Cloud className="w-6 h-6 text-primary" />
+            <p className="text-xs text-muted-foreground text-center">Streaming</p>
+            <p className="text-base font-semibold">{carbonFootprint.streaming.toFixed(2)} kg</p>
+          </div>
+
+          <div className="flex flex-col items-center gap-2 p-4 bg-background/50 rounded-lg">
+            <Sparkles className="w-6 h-6 text-primary" />
+            <p className="text-xs text-muted-foreground text-center">AI Usage</p>
+            <p className="text-base font-semibold">{carbonFootprint.ai.toFixed(2)} kg</p>
           </div>
         </div>
       </CardContent>
