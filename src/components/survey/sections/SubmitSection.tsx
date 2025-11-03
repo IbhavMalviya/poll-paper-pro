@@ -204,7 +204,11 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || !surveyData.researchConsent}
-            className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white"
+            className="flex-1 sm:flex-none"
+            style={{ 
+              background: 'var(--gradient-hero)',
+              color: 'white'
+            }}
           >
             {isSubmitting ? "Submitting..." : "Calculate & Submit"}
           </Button>
