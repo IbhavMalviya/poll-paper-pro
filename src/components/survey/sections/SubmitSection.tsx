@@ -36,6 +36,31 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
       return;
     }
 
+    // Validate required fields
+    const requiredFields = {
+      age: "Age",
+      gender: "Gender",
+      occupation: "Occupation",
+      primaryInternetConnection: "Primary Internet Connection",
+      avgDailyInternetHours: "Average Daily Internet Hours",
+      totalDevicesOwned: "Total Devices Owned",
+      primaryChargingHabits: "Primary Charging Habits",
+      primaryPowerSource: "Primary Power Source",
+      aiInteractionsPerDay: "AI Interactions Per Day",
+      cloudServicesUsageHours: "Cloud Services Usage",
+      streamingAcademicHours: "Streaming (Academic)",
+      streamingEntertainmentHours: "Streaming (Entertainment)",
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !surveyData[key as keyof typeof surveyData] || surveyData[key as keyof typeof surveyData] === 0)
+      .map(([_, label]) => label);
+
+    if (missingFields.length > 0) {
+      toast.error(`Please fill in all required fields: ${missingFields.join(", ")}`);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {

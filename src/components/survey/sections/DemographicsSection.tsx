@@ -17,19 +17,22 @@ const DemographicsSection = ({ surveyData, updateData }: DemographicsSectionProp
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="age">Age</Label>
+          <Label htmlFor="age">Age <span className="text-destructive">*</span></Label>
           <Input
             id="age"
             type="number"
             placeholder="e.g. 21"
+            required
+            min="1"
+            max="120"
             value={surveyData.age || ""}
             onChange={(e) => updateData("age", parseInt(e.target.value) || 0)}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="gender">Gender</Label>
-          <Select value={surveyData.gender} onValueChange={(value) => updateData("gender", value)}>
+          <Label htmlFor="gender">Gender <span className="text-destructive">*</span></Label>
+          <Select value={surveyData.gender} onValueChange={(value) => updateData("gender", value)} required>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -43,8 +46,8 @@ const DemographicsSection = ({ surveyData, updateData }: DemographicsSectionProp
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="occupation">Occupation</Label>
-          <Select value={surveyData.occupation} onValueChange={(value) => updateData("occupation", value)}>
+          <Label htmlFor="occupation">Occupation <span className="text-destructive">*</span></Label>
+          <Select value={surveyData.occupation} onValueChange={(value) => updateData("occupation", value)} required>
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>

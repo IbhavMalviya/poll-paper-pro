@@ -44,10 +44,11 @@ const InternetDevicesSection = ({ surveyData, updateData }: InternetDevicesSecti
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="primaryInternetConnection">Primary Internet Connection</Label>
+            <Label htmlFor="primaryInternetConnection">Primary Internet Connection <span className="text-destructive">*</span></Label>
             <Select 
               value={surveyData.primaryInternetConnection} 
               onValueChange={(value) => updateData("primaryInternetConnection", value)}
+              required
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select connection type" />
@@ -63,22 +64,29 @@ const InternetDevicesSection = ({ surveyData, updateData }: InternetDevicesSecti
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="avgDailyInternetHours">Avg daily internet usage (hrs)</Label>
+            <Label htmlFor="avgDailyInternetHours">Avg daily internet usage (hrs) <span className="text-destructive">*</span></Label>
             <Input
               id="avgDailyInternetHours"
               type="number"
               placeholder="e.g. 8"
+              required
+              min="0"
+              max="24"
+              step="0.5"
               value={surveyData.avgDailyInternetHours || ""}
               onChange={(e) => updateData("avgDailyInternetHours", parseFloat(e.target.value) || 0)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="totalDevicesOwned">Total devices owned</Label>
+            <Label htmlFor="totalDevicesOwned">Total devices owned <span className="text-destructive">*</span></Label>
             <Input
               id="totalDevicesOwned"
               type="number"
               placeholder="e.g. 5"
+              required
+              min="0"
+              max="100"
               value={surveyData.totalDevicesOwned || ""}
               onChange={(e) => updateData("totalDevicesOwned", parseInt(e.target.value) || 0)}
             />

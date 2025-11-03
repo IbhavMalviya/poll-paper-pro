@@ -16,10 +16,11 @@ const ChargingHabitsSection = ({ surveyData, updateData }: ChargingHabitsSection
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="primaryChargingHabits">Primary charging habits</Label>
+          <Label htmlFor="primaryChargingHabits">Primary charging habits <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.primaryChargingHabits} 
             onValueChange={(value) => updateData("primaryChargingHabits", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -34,10 +35,11 @@ const ChargingHabitsSection = ({ surveyData, updateData }: ChargingHabitsSection
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="primaryPowerSource">Primary power source at home</Label>
+          <Label htmlFor="primaryPowerSource">Primary power source at home <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.primaryPowerSource} 
             onValueChange={(value) => updateData("primaryPowerSource", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />

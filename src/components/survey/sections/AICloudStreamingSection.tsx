@@ -16,10 +16,11 @@ const AICloudStreamingSection = ({ surveyData, updateData }: AICloudStreamingSec
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="aiInteractionsPerDay">AI interactions per day</Label>
+          <Label htmlFor="aiInteractionsPerDay">AI interactions per day <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.aiInteractionsPerDay} 
             onValueChange={(value) => updateData("aiInteractionsPerDay", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -74,10 +75,11 @@ const AICloudStreamingSection = ({ surveyData, updateData }: AICloudStreamingSec
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="cloudServicesUsageHours">Cloud services usage (hrs/week)</Label>
+          <Label htmlFor="cloudServicesUsageHours">Cloud services usage (hrs/week) <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.cloudServicesUsageHours} 
             onValueChange={(value) => updateData("cloudServicesUsageHours", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -113,10 +115,11 @@ const AICloudStreamingSection = ({ surveyData, updateData }: AICloudStreamingSec
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="streamingAcademicHours">Streaming (academic hrs/week)</Label>
+          <Label htmlFor="streamingAcademicHours">Streaming (academic hrs/week) <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.streamingAcademicHours} 
             onValueChange={(value) => updateData("streamingAcademicHours", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
@@ -133,10 +136,11 @@ const AICloudStreamingSection = ({ surveyData, updateData }: AICloudStreamingSec
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="streamingEntertainmentHours">Streaming (entertainment hrs/week)</Label>
+          <Label htmlFor="streamingEntertainmentHours">Streaming (entertainment hrs/week) <span className="text-destructive">*</span></Label>
           <Select 
             value={surveyData.streamingEntertainmentHours} 
             onValueChange={(value) => updateData("streamingEntertainmentHours", value)}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Select" />
