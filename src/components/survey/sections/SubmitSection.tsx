@@ -206,8 +206,9 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
             disabled={isSubmitting || !surveyData.researchConsent}
             className="flex-1 sm:flex-none"
             style={{ 
-              background: 'var(--gradient-hero)',
-              color: 'white'
+              background: 'var(--gradient-success)',
+              color: 'white',
+              fontWeight: '600'
             }}
           >
             {isSubmitting ? "Submitting..." : "Calculate & Submit"}
