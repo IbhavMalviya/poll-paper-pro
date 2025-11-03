@@ -8,24 +8,9 @@ interface SustainabilityResultsDisplayProps {
 }
 
 const SustainabilityResultsDisplay = ({ surveyData }: SustainabilityResultsDisplayProps) => {
-  if (!surveyData.renewableElectricityAccess || !surveyData.estimatedAnnualFootprint) {
+  if (!surveyData.estimatedAnnualFootprint) {
     return null;
   }
-
-  const getAccessLevel = (access: string) => {
-    switch (access) {
-      case "Yes, fully renewable":
-        return { level: "Excellent", color: "bg-green-600", impact: "Very Low Impact" };
-      case "Partially (grid + renewable)":
-        return { level: "Good", color: "bg-blue-600", impact: "Moderate Impact" };
-      case "No, only grid electricity":
-        return { level: "Standard", color: "bg-yellow-600", impact: "Higher Impact" };
-      case "Don't know":
-        return { level: "Unknown", color: "bg-gray-600", impact: "Impact Unknown" };
-      default:
-        return { level: "Unknown", color: "bg-gray-600", impact: "Impact Unknown" };
-    }
-  };
 
   const getFootprintAccuracy = (estimate: string) => {
     const actualEstimate = parseFloat(surveyData.calculatedTotalCo2?.toString() || "0");
@@ -40,16 +25,34 @@ const SustainabilityResultsDisplay = ({ surveyData }: SustainabilityResultsDispl
 
     const range = estimateRanges[estimate] || [0, 10000];
     const isAccurate = actualEstimate >= range[0] && actualEstimate <= range[1];
+    
+    let detailedMessage = "";
+    let impactLevel = "";
+    
+    if (estimate === "Not sure") {
+      detailedMessage = `Your actual calculated footprint is ${actualEstimate.toFixed(2)} kg CO₂/year. This calculation is based on your device usage, streaming habits, AI interactions, and charging patterns. Understanding your digital carbon footprint is the first step toward reducing it.`;
+      impactLevel = "Learning Phase";
+    } else if (isAccurate) {
+      detailedMessage = `Great awareness! Your estimate of ${estimate} closely matches your calculated footprint of ${actualEstimate.toFixed(2)} kg CO₂/year. This shows you have a good understanding of your digital environmental impact.`;
+      impactLevel = "Accurate Understanding";
+    } else if (actualEstimate < range[0]) {
+      const diff = ((range[0] - actualEstimate) / range[0] * 100).toFixed(0);
+      detailedMessage = `Your actual footprint (${actualEstimate.toFixed(2)} kg CO₂/year) is ${diff}% lower than your estimate of ${estimate}. You're doing better than you thought! Your digital habits are more environmentally friendly than expected.`;
+      impactLevel = "Better Than Expected";
+    } else {
+      const diff = ((actualEstimate - range[1]) / range[1] * 100).toFixed(0);
+      detailedMessage = `Your actual footprint (${actualEstimate.toFixed(2)} kg CO₂/year) is ${diff}% higher than your estimate of ${estimate}. This is an opportunity to optimize your digital habits and reduce your environmental impact.`;
+      impactLevel = "Optimization Opportunity";
+    }
 
     return {
       isAccurate,
-      message: isAccurate
-        ? "Your estimate aligns well with the calculated footprint!"
-        : "There's a difference between your estimate and the actual calculation.",
+      message: detailedMessage,
+      impactLevel,
+      actualValue: actualEstimate,
     };
   };
 
-  const accessInfo = getAccessLevel(surveyData.renewableElectricityAccess);
   const accuracyInfo = getFootprintAccuracy(surveyData.estimatedAnnualFootprint);
 
   return (
@@ -57,38 +60,31 @@ const SustainabilityResultsDisplay = ({ surveyData }: SustainabilityResultsDispl
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Leaf className="w-5 h-5 text-green-600" />
-          Your Sustainability Profile
+          Footprint Awareness Analysis
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-3">
+        <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg">
+          <span className="text-sm font-medium">Awareness Level</span>
+          <Badge variant={accuracyInfo.isAccurate ? "default" : "secondary"} className="text-xs">
+            {accuracyInfo.impactLevel}
+          </Badge>
+        </div>
+
+        <div className="p-4 bg-background/50 rounded-lg space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-yellow-600" />
-              <span className="text-sm font-medium">Renewable Energy Access</span>
-            </div>
-            <Badge className={`${accessInfo.color} text-white`}>{accessInfo.level}</Badge>
+            <span className="text-sm font-medium">Your Estimate</span>
+            <span className="text-sm text-muted-foreground">{surveyData.estimatedAnnualFootprint}</span>
           </div>
-          <p className="text-sm text-muted-foreground pl-6">{accessInfo.impact}</p>
-        </div>
-
-        <div className="p-4 bg-background/50 rounded-lg space-y-2">
-          <p className="text-sm font-medium">Footprint Awareness</p>
-          <p className="text-xs text-muted-foreground">{accuracyInfo.message}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <Badge variant={accuracyInfo.isAccurate ? "default" : "secondary"}>
-              {accuracyInfo.isAccurate ? "Accurate Estimate" : "Learning Opportunity"}
-            </Badge>
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Calculated Footprint</span>
+            <span className="text-sm font-semibold text-primary">{accuracyInfo.actualValue.toFixed(2)} kg CO₂/year</span>
           </div>
         </div>
 
-        {surveyData.renewableElectricityAccess === "No, only grid electricity" && (
-          <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-xs text-yellow-800 dark:text-yellow-200">
-              💡 Consider exploring renewable energy options to reduce your carbon footprint!
-            </p>
-          </div>
-        )}
+        <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+          <p className="text-sm leading-relaxed text-foreground">{accuracyInfo.message}</p>
+        </div>
       </CardContent>
     </Card>
   );

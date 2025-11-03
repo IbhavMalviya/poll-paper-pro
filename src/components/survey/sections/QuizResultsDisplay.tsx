@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { SurveyData } from "@/types/survey";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 interface QuizResultsDisplayProps {
   surveyData: Partial<SurveyData>;
@@ -8,13 +10,33 @@ interface QuizResultsDisplayProps {
 
 const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
   const quizFields = [
-    { key: "quizDataUsageImpact", label: "Data Usage Impact" },
-    { key: "quizDeviceLifespanImpact", label: "Device Lifespan Impact" },
-    { key: "quizChargingHabitsImpact", label: "Charging Habits Impact" },
-    { key: "quizStreamingGamingImpact", label: "Streaming/Gaming Impact" },
-    { key: "quizRenewableEnergyImpact", label: "Renewable Energy Impact" },
-    { key: "quizAiUsageImpact", label: "AI Usage Impact" },
+    { key: "quizDataUsageImpact", label: "Data Usage Impact", actualKey: "calculatedStreamingCo2" },
+    { key: "quizDeviceLifespanImpact", label: "Device Lifespan Impact", actualKey: "calculatedDevicesCo2" },
+    { key: "quizChargingHabitsImpact", label: "Charging Habits Impact", actualKey: "calculatedDevicesCo2" },
+    { key: "quizStreamingGamingImpact", label: "Streaming/Gaming Impact", actualKey: "calculatedStreamingCo2" },
+    { key: "quizRenewableEnergyImpact", label: "Renewable Energy Impact", actualKey: "calculatedTotalCo2" },
+    { key: "quizAiUsageImpact", label: "AI Usage Impact", actualKey: "calculatedAiCo2" },
   ];
+
+  const normalizeActualImpact = (value: number, maxValue: number) => {
+    // Normalize actual CO2 values to a 1-10 scale
+    if (maxValue === 0) return 0;
+    return Math.min(10, Math.max(1, Math.round((value / maxValue) * 10)));
+  };
+
+  const getComparisonIcon = (predicted: number, actual: number) => {
+    const diff = predicted - actual;
+    if (Math.abs(diff) <= 1) return <Minus className="w-4 h-4 text-yellow-600" />;
+    if (diff > 1) return <TrendingUp className="w-4 h-4 text-red-600" />;
+    return <TrendingDown className="w-4 h-4 text-green-600" />;
+  };
+
+  const getComparisonText = (predicted: number, actual: number) => {
+    const diff = predicted - actual;
+    if (Math.abs(diff) <= 1) return "Accurate";
+    if (diff > 1) return "Overestimated";
+    return "Underestimated";
+  };
 
   const filledCount = quizFields.filter(
     (field) => surveyData[field.key as keyof SurveyData] !== undefined
@@ -65,15 +87,35 @@ const QuizResultsDisplay = ({ surveyData }: QuizResultsDisplayProps) => {
           <Progress value={(totalScore / maxPossibleScore) * 100} className="h-3" />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-3">
           {quizFields.map((field) => {
-            const value = Number(surveyData[field.key as keyof SurveyData]) || 0;
+            const predictedValue = Number(surveyData[field.key as keyof SurveyData]) || 0;
+            const actualCo2 = Number(surveyData[field.actualKey as keyof SurveyData]) || 0;
+            const totalCo2 = Number(surveyData.calculatedTotalCo2) || 1;
+            const actualNormalized = normalizeActualImpact(actualCo2, totalCo2 / 3);
+            const comparisonText = getComparisonText(predictedValue, actualNormalized);
+            const comparisonIcon = getComparisonIcon(predictedValue, actualNormalized);
+            
             return (
-              <div key={field.key} className="p-3 bg-background/50 rounded-lg">
-                <p className="text-xs text-muted-foreground mb-1">{field.label}</p>
-                <div className="flex items-center gap-2">
-                  <Progress value={value * 10} className="h-2 flex-1" />
-                  <span className="text-sm font-semibold">{value}</span>
+              <div key={field.key} className="p-3 bg-background/50 rounded-lg space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium">{field.label}</p>
+                  <Badge variant="outline" className="text-xs flex items-center gap-1">
+                    {comparisonIcon}
+                    {comparisonText}
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Your Prediction</span>
+                    <span className="font-semibold">{predictedValue}/10</span>
+                  </div>
+                  <Progress value={predictedValue * 10} className="h-2" />
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Actual Impact</span>
+                    <span className="font-semibold">{actualNormalized}/10</span>
+                  </div>
+                  <Progress value={actualNormalized * 10} className="h-2 [&>div]:bg-primary/60" />
                 </div>
               </div>
             );
