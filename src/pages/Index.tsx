@@ -94,8 +94,8 @@ const Index = () => {
           </div>
 
           {/* Carbon Footprint Display & Submit */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-6 space-y-6">
+          <div className="lg:col-span-1 lg:h-fit">
+            <div className="lg:sticky lg:top-6 space-y-6">
               <CarbonFootprintDisplay carbonFootprint={carbonFootprint} />
               <SubmitSection surveyData={surveyData} updateData={updateData} />
             </div>
