@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,6 +9,63 @@ import { SurveyData } from "@/types/survey";
 import { calculateCarbonFootprint } from "@/utils/carbonCalculations";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Shield, Lock, UserX, Server, Download, Globe } from "lucide-react";
+import { z } from "zod";
+
+// Comprehensive validation schema for survey data
+const surveySchema = z.object({
+  // Demographics
+  age: z.number().int().min(1, "Age must be at least 1").max(120, "Age must be less than 120"),
+  gender: z.string().trim().min(1, "Gender is required").max(50, "Gender must be less than 50 characters"),
+  occupation: z.string().trim().min(1, "Occupation is required").max(100, "Occupation must be less than 100 characters"),
+  homeSchooling: z.string().trim().max(100).optional(),
+  homeCity: z.string().trim().max(100).optional(),
+  homeState: z.string().trim().max(100).optional(),
+  cityTier: z.string().trim().max(50).optional(),
+  currentAccommodation: z.string().trim().max(100).optional(),
+  familyIncomeRange: z.string().trim().max(100).optional(),
+  
+  // Internet & Devices
+  primaryInternetConnection: z.string().trim().min(1, "Internet connection type is required").max(100),
+  avgDailyInternetHours: z.number().min(0, "Hours cannot be negative").max(24, "Hours cannot exceed 24"),
+  totalDevicesOwned: z.number().int().min(0, "Device count cannot be negative").max(100, "Device count seems unrealistic"),
+  devices: z.array(z.object({
+    type: z.string().max(50),
+    count: z.number().int().min(0).max(100),
+    hoursPerDay: z.number().min(0).max(24),
+    ageYears: z.number().int().min(0).max(50)
+  })).optional(),
+  
+  // Charging & Power
+  primaryChargingHabits: z.string().trim().min(1, "Charging habits are required").max(100),
+  primaryPowerSource: z.string().trim().max(100).optional(),
+  renewableEnergyUsage: z.string().trim().max(100).optional(),
+  hasSolarPanels: z.string().trim().max(50).optional(),
+  energyEfficientAppliances: z.string().trim().max(50).optional(),
+  
+  // AI, Cloud & Streaming
+  aiInteractionsPerDay: z.string().trim().min(1, "AI interactions are required").max(100),
+  typeOfAiUsage: z.string().trim().max(200).optional(),
+  typicalAiSessionLength: z.string().trim().max(100).optional(),
+  cloudServicesUsageHours: z.string().trim().min(1, "Cloud usage is required").max(100),
+  uploadsPerMonthGb: z.string().trim().max(100).optional(),
+  streamingAcademicHours: z.string().trim().min(1, "Academic streaming hours are required").max(100),
+  streamingEntertainmentHours: z.string().trim().min(1, "Entertainment streaming hours are required").max(100),
+  
+  // Quiz responses
+  quizDataUsageImpact: z.number().int().min(0).max(10).optional(),
+  quizDeviceLifespanImpact: z.number().int().min(0).max(10).optional(),
+  quizChargingHabitsImpact: z.number().int().min(0).max(10).optional(),
+  quizStreamingGamingImpact: z.number().int().min(0).max(10).optional(),
+  quizRenewableEnergyImpact: z.number().int().min(0).max(10).optional(),
+  quizAiUsageImpact: z.number().int().min(0).max(10).optional(),
+  
+  // Sustainability
+  renewableElectricityAccess: z.string().trim().max(100).optional(),
+  estimatedAnnualFootprint: z.string().trim().max(100).optional(),
+  
+  // Consent
+  researchConsent: z.boolean().refine(val => val === true, "Consent is required"),
+});
 
 interface SubmitSectionProps {
   surveyData: Partial<SurveyData>;
@@ -17,6 +74,32 @@ interface SubmitSectionProps {
 
 const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sessionId] = useState(() => {
+    // Get or create a unique session ID
+    let id = localStorage.getItem('survey_session_id');
+    if (!id) {
+      id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('survey_session_id', id);
+    }
+    return id;
+  });
+
+  // Check if user has already submitted in this session
+  useEffect(() => {
+    const submissions = localStorage.getItem('survey_submissions');
+    if (submissions) {
+      const submissionData = JSON.parse(submissions);
+      const sessionSubmissions = submissionData[sessionId];
+      if (sessionSubmissions && sessionSubmissions.count >= 1) {
+        const lastSubmission = new Date(sessionSubmissions.lastSubmission);
+        const hoursSinceSubmission = (Date.now() - lastSubmission.getTime()) / (1000 * 60 * 60);
+        
+        if (hoursSinceSubmission < 1) {
+          toast.info("You've already submitted a survey recently. Please wait before submitting again.");
+        }
+      }
+    }
+  }, [sessionId]);
 
   const downloadJSON = () => {
     const dataStr = JSON.stringify(surveyData, null, 2);
@@ -31,33 +114,30 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!surveyData.researchConsent) {
-      toast.error("Please consent to participating in this research");
-      return;
+    // Check rate limiting
+    const submissions = localStorage.getItem('survey_submissions');
+    if (submissions) {
+      const submissionData = JSON.parse(submissions);
+      const sessionSubmissions = submissionData[sessionId];
+      if (sessionSubmissions && sessionSubmissions.count >= 1) {
+        const lastSubmission = new Date(sessionSubmissions.lastSubmission);
+        const hoursSinceSubmission = (Date.now() - lastSubmission.getTime()) / (1000 * 60 * 60);
+        
+        if (hoursSinceSubmission < 1) {
+          toast.error("You've already submitted a survey recently. Please wait at least 1 hour between submissions.");
+          return;
+        }
+      }
     }
 
-    // Validate required fields
-    const requiredFields = {
-      age: "Age",
-      gender: "Gender",
-      occupation: "Occupation",
-      primaryInternetConnection: "Primary Internet Connection",
-      avgDailyInternetHours: "Average Daily Internet Hours",
-      totalDevicesOwned: "Total Devices Owned",
-      primaryChargingHabits: "Primary Charging Habits",
-      primaryPowerSource: "Primary Power Source",
-      aiInteractionsPerDay: "AI Interactions Per Day",
-      cloudServicesUsageHours: "Cloud Services Usage",
-      streamingAcademicHours: "Streaming (Academic)",
-      streamingEntertainmentHours: "Streaming (Entertainment)",
-    };
-
-    const missingFields = Object.entries(requiredFields)
-      .filter(([key]) => !surveyData[key as keyof typeof surveyData] || surveyData[key as keyof typeof surveyData] === 0)
-      .map(([_, label]) => label);
-
-    if (missingFields.length > 0) {
-      toast.error(`Please fill in all required fields: ${missingFields.join(", ")}`);
+    // Validate data with zod schema
+    const validationResult = surveySchema.safeParse(surveyData);
+    
+    if (!validationResult.success) {
+      const errors = validationResult.error.errors;
+      const errorMessages = errors.map(err => `${err.path.join('.')}: ${err.message}`).join('; ');
+      toast.error(`Validation failed: ${errorMessages}`);
+      console.error('Validation errors:', errors);
       return;
     }
 
@@ -110,6 +190,14 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
       }]);
 
       if (error) throw error;
+
+      // Track successful submission
+      const submissions = JSON.parse(localStorage.getItem('survey_submissions') || '{}');
+      submissions[sessionId] = {
+        count: (submissions[sessionId]?.count || 0) + 1,
+        lastSubmission: new Date().toISOString()
+      };
+      localStorage.setItem('survey_submissions', JSON.stringify(submissions));
 
       toast.success("Survey submitted successfully! Thank you for your contribution.");
     } catch (error) {
