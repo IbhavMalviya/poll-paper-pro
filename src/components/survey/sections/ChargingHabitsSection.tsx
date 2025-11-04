@@ -26,11 +26,10 @@ const ChargingHabitsSection = ({ surveyData, updateData }: ChargingHabitsSection
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Charge overnight regularly">Charge overnight regularly</SelectItem>
-              <SelectItem value="Charge when battery is low (below 20%)">Charge when battery is low (below 20%)</SelectItem>
-              <SelectItem value="Keep devices plugged in most of the time">Keep devices plugged in most of the time</SelectItem>
-              <SelectItem value="Use fast charging frequently">Use fast charging frequently</SelectItem>
-              <SelectItem value="Charge multiple times a day">Charge multiple times a day</SelectItem>
+              <SelectItem value="Charge overnight">Charge overnight</SelectItem>
+              <SelectItem value="Charge when needed (20-80%)">Charge when needed (20-80%)</SelectItem>
+              <SelectItem value="Keep plugged in while working">Keep plugged in while working</SelectItem>
+              <SelectItem value="Use power-saving mode">Use power-saving mode & optimize charging</SelectItem>
             </SelectContent>
           </Select>
         </div>

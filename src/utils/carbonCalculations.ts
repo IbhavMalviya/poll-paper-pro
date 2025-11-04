@@ -110,11 +110,10 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
 
   // Charging habits and power source impact
   const chargingHabitsMultiplier: Record<string, number> = {
-    "Charge overnight regularly": 1.3,
-    "Charge when battery is low (below 20%)": 1.0,
-    "Keep devices plugged in most of the time": 1.5,
-    "Use fast charging frequently": 1.2,
-    "Charge multiple times a day": 1.4,
+    "Charge overnight": 1.2,
+    "Charge when needed (20-80%)": 1.0,
+    "Keep plugged in while working": 1.4,
+    "Use power-saving mode & optimize charging": 0.8,
   };
 
   const powerSourceMultiplier: Record<string, number> = {
@@ -125,14 +124,24 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
     "Inverter/UPS (Battery backup)": 1.2,
   };
 
+  // Renewable energy reduction
+  const renewableReductionMap: Record<string, number> = {
+    "None": 1.0,
+    "Less than 25%": 0.85,
+    "25-50%": 0.65,
+    "50-75%": 0.45,
+    "More than 75%": 0.25,
+  };
+
   const chargingMultiplier = chargingHabitsMultiplier[data.primaryChargingHabits || ""] || 1.0;
   const powerMultiplier = powerSourceMultiplier[data.primaryPowerSource || "Grid electricity"] || 1.0;
+  const renewableReduction = renewableReductionMap[data.renewableEnergyUsage || "None"] || 1.0;
   
   // Apply multipliers to device usage emissions and calculate daily charging impact
   const dailyDeviceCo2 = devicesCo2 / 365;
   // Base charging emissions (20% of device power consumption) + habit multiplier effect
   const baseChargingCo2 = dailyDeviceCo2 * 0.2;
-  chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier;
+  chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier * renewableReduction;
 
   const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2;
 
