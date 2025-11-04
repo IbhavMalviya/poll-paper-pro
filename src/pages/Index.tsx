@@ -21,9 +21,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-background relative">
       {/* Floating Background Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Top section */}
         <Sun className="absolute top-20 right-[10%] w-32 h-32 text-primary/20 floating-element" />
         <Leaf className="absolute top-40 left-[15%] w-24 h-24 text-primary/15 floating-element-slow" />
@@ -94,8 +94,8 @@ const Index = () => {
           </div>
 
           {/* Carbon Footprint Display & Submit */}
-          <div className="lg:col-span-1 lg:h-fit">
-            <div className="lg:sticky lg:top-6 space-y-6">
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-6 space-y-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-auto">
               <CarbonFootprintDisplay carbonFootprint={carbonFootprint} />
               <SubmitSection surveyData={surveyData} updateData={updateData} />
             </div>
