@@ -6,7 +6,6 @@ import ChargingHabitsSection from "./sections/ChargingHabitsSection";
 import AICloudStreamingSection from "./sections/AICloudStreamingSection";
 import CarbonQuizSection from "./sections/CarbonQuizSection";
 import SustainabilitySection from "./sections/SustainabilitySection";
-import SubmitSection from "./sections/SubmitSection";
 import { SurveyData } from "@/types/survey";
 import { calculateCarbonFootprint } from "@/utils/carbonCalculations";
 
@@ -14,9 +13,10 @@ interface SurveyFormProps {
   surveyData: Partial<SurveyData>;
   setSurveyData: (data: Partial<SurveyData>) => void;
   setCarbonFootprint: (footprint: { total: number; devices: number; streaming: number; ai: number; charging: number }) => void;
+  updateData: (field: string, value: any) => void;
 }
 
-const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFormProps) => {
+const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint, updateData: updateDataProp }: SurveyFormProps) => {
   // Recalculate carbon footprint whenever survey data changes
   useEffect(() => {
     const footprint = calculateCarbonFootprint(surveyData);
@@ -44,9 +44,9 @@ const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFor
     }
   }, [surveyData, setCarbonFootprint, setSurveyData]);
 
-  const updateData = (field: string, value: any) => {
+  const updateData = updateDataProp || ((field: string, value: any) => {
     setSurveyData({ ...surveyData, [field]: value });
-  };
+  });
 
   return (
     <div className="space-y-6">
@@ -73,8 +73,6 @@ const SurveyForm = ({ surveyData, setSurveyData, setCarbonFootprint }: SurveyFor
       <Card style={{ boxShadow: 'var(--shadow-card)' }}>
         <SustainabilitySection surveyData={surveyData} updateData={updateData} />
       </Card>
-
-      <SubmitSection surveyData={surveyData} updateData={updateData} />
     </div>
   );
 };

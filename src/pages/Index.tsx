@@ -3,6 +3,7 @@ import { Cloud, Leaf, Sun, Trees, Wind, Droplets, Recycle, Sprout } from "lucide
 import SurveyForm from "@/components/survey/SurveyForm";
 import CarbonFootprintDisplay from "@/components/survey/CarbonFootprintDisplay";
 import DigitalCarbonFacts from "@/components/survey/DigitalCarbonFacts";
+import SubmitSection from "@/components/survey/sections/SubmitSection";
 import { SurveyData } from "@/types/survey";
 
 const Index = () => {
@@ -14,6 +15,10 @@ const Index = () => {
     ai: 0,
     charging: 0,
   });
+
+  const updateData = (field: string, value: any) => {
+    setSurveyData({ ...surveyData, [field]: value });
+  };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -84,12 +89,14 @@ const Index = () => {
               surveyData={surveyData}
               setSurveyData={setSurveyData}
               setCarbonFootprint={setCarbonFootprint}
+              updateData={updateData}
             />
           </div>
 
-          {/* Carbon Footprint Display */}
-          <div className="lg:col-span-1">
+          {/* Carbon Footprint Display & Submit */}
+          <div className="lg:col-span-1 space-y-6">
             <CarbonFootprintDisplay carbonFootprint={carbonFootprint} />
+            <SubmitSection surveyData={surveyData} updateData={updateData} />
           </div>
         </div>
 
