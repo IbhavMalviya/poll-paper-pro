@@ -133,15 +133,24 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
     "More than 75%": 0.25,
   };
 
+  // Energy-efficient appliances reduction
+  const energyEfficientReductionMap: Record<string, number> = {
+    "None": 1.0,
+    "Some appliances": 0.97,
+    "Most appliances": 0.94,
+    "All appliances": 0.90,
+  };
+
   const chargingMultiplier = chargingHabitsMultiplier[data.primaryChargingHabits || ""] || 1.0;
   const powerMultiplier = powerSourceMultiplier[data.primaryPowerSource || "Grid electricity"] || 1.0;
   const renewableReduction = renewableReductionMap[data.renewableEnergyUsage || "None"] || 1.0;
+  const energyEfficientReduction = energyEfficientReductionMap[data.energyEfficientAppliances || "None"] || 1.0;
   
   // Apply multipliers to device usage emissions and calculate daily charging impact
   const dailyDeviceCo2 = devicesCo2 / 365;
   // Base charging emissions (20% of device power consumption) + habit multiplier effect
   const baseChargingCo2 = dailyDeviceCo2 * 0.2;
-  chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier * renewableReduction;
+  chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier * renewableReduction * energyEfficientReduction;
 
   const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2;
 
