@@ -121,7 +121,7 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
   };
 
   return (
-    <Card style={{ boxShadow: 'var(--shadow-card)' }}>
+    <Card className="transition-all duration-300 hover:shadow-xl" style={{ boxShadow: 'var(--shadow-card)' }}>
       <CardContent className="pt-6">
         <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
           <div className="flex items-center gap-2 mb-3">

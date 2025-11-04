@@ -95,9 +95,13 @@ const Index = () => {
 
           {/* Carbon Footprint Display & Submit */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-6 space-y-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-auto">
-              <CarbonFootprintDisplay carbonFootprint={carbonFootprint} />
-              <SubmitSection surveyData={surveyData} updateData={updateData} />
+            <div className="lg:sticky lg:top-6 space-y-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-auto animate-fade-in">
+              <div className="animate-slide-in-right">
+                <CarbonFootprintDisplay carbonFootprint={carbonFootprint} />
+              </div>
+              <div className="animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
+                <SubmitSection surveyData={surveyData} updateData={updateData} />
+              </div>
             </div>
           </div>
         </div>

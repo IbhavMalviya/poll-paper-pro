@@ -13,7 +13,7 @@ interface CarbonFootprintDisplayProps {
 
 const CarbonFootprintDisplay = ({ carbonFootprint }: CarbonFootprintDisplayProps) => {
   return (
-    <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20" style={{ boxShadow: 'var(--shadow-card)' }}>
+    <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 transition-all duration-300 hover:shadow-xl hover:border-primary/30" style={{ boxShadow: 'var(--shadow-card)' }}>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">
           Your Estimated Daily Carbon Footprint
