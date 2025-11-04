@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database, Video, Brain, Factory, Zap, Cable, Lightbulb, Leaf } from "lucide-react";
+import { Database, Video, Brain, Factory, Zap, Cable, Lightbulb } from "lucide-react";
 
 const facts = [
   {
@@ -76,13 +76,6 @@ const DigitalCarbonFacts = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
-        
-        <div className="mt-6 p-4 bg-primary/5 rounded-lg border-2 border-primary/20 flex items-center gap-2">
-          <Leaf className="w-5 h-5 text-primary flex-shrink-0" />
-          <p className="text-sm text-foreground/80">
-            💚 Your responses help researchers understand digital behavior patterns and promote sustainable technology use!
-          </p>
         </div>
       </CardContent>
     </Card>

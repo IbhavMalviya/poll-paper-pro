@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SurveyData } from "@/types/survey";
 import { calculateCarbonFootprint } from "@/utils/carbonCalculations";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Shield, Lock, UserX, Server, Download, Globe, Heart } from "lucide-react";
+import { Shield, Lock, UserX, Server, Download, Globe } from "lucide-react";
 
 interface SubmitSectionProps {
   surveyData: Partial<SurveyData>;
@@ -124,11 +124,6 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
     <Card className="transition-all duration-300 hover:shadow-xl" style={{ boxShadow: 'var(--shadow-card)' }}>
       <CardContent className="pt-6">
         <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="flex items-center gap-2 mb-3">
-            <Heart className="w-5 h-5 text-primary" />
-            <h3 className="font-semibold text-lg">💚 Your responses help researchers understand digital behavior patterns and promote sustainable technology use!</h3>
-          </div>
-          
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="privacy-info" className="border-none">
               <AccordionTrigger className="text-sm font-medium hover:no-underline py-2">
