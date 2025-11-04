@@ -10,19 +10,46 @@ import { toast } from "sonner";
 interface SurveyResponse {
   id: string;
   created_at: string;
-  age: number;
-  gender: string;
-  occupation: string;
-  home_city: string;
-  home_state: string;
-  calculated_total_co2: number;
-  calculated_devices_co2: number;
-  calculated_streaming_co2: number;
-  calculated_ai_co2: number;
-  calculated_charging_co2: number;
-  primary_internet_connection: string;
-  total_devices_owned: number;
-  avg_daily_internet_hours: number;
+  age: number | null;
+  gender: string | null;
+  occupation: string | null;
+  home_city: string | null;
+  home_state: string | null;
+  home_schooling: string | null;
+  city_tier: string | null;
+  current_accommodation: string | null;
+  family_income_range: string | null;
+  total_devices_owned: number | null;
+  devices: any[] | null;
+  avg_daily_internet_hours: number | null;
+  primary_internet_connection: string | null;
+  streaming_academic_hours: string | null;
+  streaming_entertainment_hours: string | null;
+  cloud_services_usage_hours: string | null;
+  primary_charging_habits: string | null;
+  primary_power_source: string | null;
+  renewable_electricity_access: string | null;
+  renewable_energy_usage: string | null;
+  has_solar_panels: string | null;
+  energy_efficient_appliances: string | null;
+  ai_interactions_per_day: string | null;
+  type_of_ai_usage: string | null;
+  typical_ai_session_length: string | null;
+  uploads_per_month_gb: string | null;
+  quiz_data_usage_impact: number | null;
+  quiz_device_lifespan_impact: number | null;
+  quiz_charging_habits_impact: number | null;
+  quiz_streaming_gaming_impact: number | null;
+  quiz_renewable_energy_impact: number | null;
+  quiz_ai_usage_impact: number | null;
+  calculated_total_co2: number | null;
+  calculated_devices_co2: number | null;
+  calculated_streaming_co2: number | null;
+  calculated_ai_co2: number | null;
+  calculated_charging_co2: number | null;
+  estimated_annual_footprint: string | null;
+  research_consent: boolean | null;
+  raw_data: any | null;
 }
 
 const Admin = () => {
@@ -96,36 +123,79 @@ const Admin = () => {
       return;
     }
 
-    // Define CSV headers
+    // Define comprehensive CSV headers for all survey fields
     const headers = [
-      'ID', 'Date', 'Age', 'Gender', 'Occupation', 'City', 'State',
-      'Internet Connection', 'Total Devices', 'Daily Internet Hours (hrs)',
-      'Total CO2 (kg/day)', 'Devices CO2', 'Streaming CO2', 'AI CO2', 'Charging CO2'
+      'ID', 'Date', 'Age', 'Gender', 'Occupation', 'City', 'State', 
+      'Home Schooling', 'City Tier', 'Current Accommodation', 'Family Income Range',
+      'Total Devices', 'Devices (JSON)', 'Daily Internet Hours',
+      'Primary Internet Connection', 'Streaming Academic Hours', 'Streaming Entertainment Hours',
+      'Cloud Services Usage Hours', 'Primary Charging Habits', 'Primary Power Source',
+      'Renewable Electricity Access', 'Renewable Energy Usage', 'Has Solar Panels',
+      'Energy Efficient Appliances', 'AI Interactions Per Day', 'Type of AI Usage',
+      'Typical AI Session Length', 'Uploads Per Month (GB)',
+      'Quiz: Data Usage Impact', 'Quiz: Device Lifespan Impact', 'Quiz: Charging Habits Impact',
+      'Quiz: Streaming/Gaming Impact', 'Quiz: Renewable Energy Impact', 'Quiz: AI Usage Impact',
+      'Total CO2 (kg/day)', 'Devices CO2', 'Streaming CO2', 'AI CO2', 'Charging CO2',
+      'Estimated Annual Footprint', 'Research Consent', 'Raw Data (JSON)'
     ];
 
-    // Convert data to CSV rows
+    // Convert data to CSV rows with all fields
     const rows = responses.map(r => [
       r.id,
-      new Date(r.created_at).toLocaleDateString(),
-      r.age || '',
-      r.gender || '',
-      r.occupation || '',
-      r.home_city || '',
-      r.home_state || '',
-      r.primary_internet_connection || '',
-      r.total_devices_owned || '',
-      r.avg_daily_internet_hours || '',
-      r.calculated_total_co2 || '',
-      r.calculated_devices_co2 || '',
-      r.calculated_streaming_co2 || '',
-      r.calculated_ai_co2 || '',
-      r.calculated_charging_co2 || ''
+      new Date(r.created_at).toLocaleDateString() + ' ' + new Date(r.created_at).toLocaleTimeString(),
+      r.age ?? '',
+      r.gender ?? '',
+      r.occupation ?? '',
+      r.home_city ?? '',
+      r.home_state ?? '',
+      r.home_schooling ?? '',
+      r.city_tier ?? '',
+      r.current_accommodation ?? '',
+      r.family_income_range ?? '',
+      r.total_devices_owned ?? '',
+      r.devices ? JSON.stringify(r.devices) : '',
+      r.avg_daily_internet_hours ?? '',
+      r.primary_internet_connection ?? '',
+      r.streaming_academic_hours ?? '',
+      r.streaming_entertainment_hours ?? '',
+      r.cloud_services_usage_hours ?? '',
+      r.primary_charging_habits ?? '',
+      r.primary_power_source ?? '',
+      r.renewable_electricity_access ?? '',
+      r.renewable_energy_usage ?? '',
+      r.has_solar_panels ?? '',
+      r.energy_efficient_appliances ?? '',
+      r.ai_interactions_per_day ?? '',
+      r.type_of_ai_usage ?? '',
+      r.typical_ai_session_length ?? '',
+      r.uploads_per_month_gb ?? '',
+      r.quiz_data_usage_impact ?? '',
+      r.quiz_device_lifespan_impact ?? '',
+      r.quiz_charging_habits_impact ?? '',
+      r.quiz_streaming_gaming_impact ?? '',
+      r.quiz_renewable_energy_impact ?? '',
+      r.quiz_ai_usage_impact ?? '',
+      r.calculated_total_co2 ?? '',
+      r.calculated_devices_co2 ?? '',
+      r.calculated_streaming_co2 ?? '',
+      r.calculated_ai_co2 ?? '',
+      r.calculated_charging_co2 ?? '',
+      r.estimated_annual_footprint ?? '',
+      r.research_consent ?? '',
+      r.raw_data ? JSON.stringify(r.raw_data) : ''
     ]);
 
-    // Create CSV content
+    // Create CSV content with proper escaping
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ...rows.map(row => row.map(cell => {
+        const cellStr = String(cell);
+        // Escape quotes and wrap in quotes if contains comma, quote, or newline
+        if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+          return `"${cellStr.replace(/"/g, '""')}"`;
+        }
+        return cellStr;
+      }).join(','))
     ].join('\n');
 
     // Download CSV
