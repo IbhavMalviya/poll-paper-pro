@@ -71,10 +71,16 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="text-left md:text-right bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-white/90 text-sm font-medium mb-1">Daily Footprint Preview</p>
-                <p className="text-3xl md:text-4xl font-bold text-white">₹{(carbonFootprint.total * 3).toFixed(0)}</p>
-                <p className="text-white/80 text-sm">(at ₹3000/tCO₂)</p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="text-left bg-white/10 backdrop-blur-sm rounded-lg p-4 flex-1">
+                  <p className="text-white/90 text-sm font-medium mb-1">Daily Cost</p>
+                  <p className="text-2xl md:text-3xl font-bold text-white">₹{(carbonFootprint.total * 3).toFixed(0)}</p>
+                </div>
+                <div className="text-left bg-white/10 backdrop-blur-sm rounded-lg p-4 flex-1">
+                  <p className="text-white/90 text-sm font-medium mb-1">Annual Cost</p>
+                  <p className="text-2xl md:text-3xl font-bold text-white">₹{(carbonFootprint.total * 3 * 365).toFixed(0)}</p>
+                  <p className="text-white/80 text-xs">(at ₹3000/tCO₂)</p>
+                </div>
               </div>
             </div>
           </div>
