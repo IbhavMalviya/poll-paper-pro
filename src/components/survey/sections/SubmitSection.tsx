@@ -189,18 +189,16 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
           </Label>
         </div>
 
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 justify-end">
           <Button
             variant="outline"
             onClick={downloadJSON}
-            className="flex-1 sm:flex-none"
           >
             Download JSON
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || !surveyData.researchConsent}
-            className="flex-1 sm:flex-none"
             style={{ 
               background: 'var(--gradient-success)',
               color: 'white',
