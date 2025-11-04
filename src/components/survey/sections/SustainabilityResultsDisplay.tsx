@@ -16,11 +16,11 @@ const SustainabilityResultsDisplay = ({ surveyData }: SustainabilityResultsDispl
     const dailyFootprint = parseFloat(surveyData.calculatedTotalCo2?.toString() || "0");
     const actualEstimate = dailyFootprint * 365; // Convert daily to annual
     const estimateRanges: Record<string, [number, number]> = {
-      "Less than 500 kg CO₂": [0, 500],
-      "500-1000 kg CO₂": [500, 1000],
-      "1000-2000 kg CO₂": [1000, 2000],
-      "2000-3000 kg CO₂": [2000, 3000],
-      "More than 3000 kg CO₂": [3000, 10000],
+      "Less than 200 kg CO₂": [0, 200],
+      "200-400 kg CO₂": [200, 400],
+      "400-600 kg CO₂": [400, 600],
+      "600-800 kg CO₂": [600, 800],
+      "More than 800 kg CO₂": [800, 10000],
       "Not sure": [0, 10000],
     };
 

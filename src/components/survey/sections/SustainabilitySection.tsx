@@ -28,11 +28,11 @@ const SustainabilitySection = ({ surveyData, updateData }: SustainabilitySection
               <SelectValue placeholder="Estimate your annual electronic CO₂ footprint" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Less than 500 kg CO₂">Less than 500 kg CO₂</SelectItem>
-              <SelectItem value="500-1000 kg CO₂">500-1000 kg CO₂</SelectItem>
-              <SelectItem value="1000-2000 kg CO₂">1000-2000 kg CO₂</SelectItem>
-              <SelectItem value="2000-3000 kg CO₂">2000-3000 kg CO₂</SelectItem>
-              <SelectItem value="More than 3000 kg CO₂">More than 3000 kg CO₂</SelectItem>
+              <SelectItem value="Less than 200 kg CO₂">Less than 200 kg CO₂</SelectItem>
+              <SelectItem value="200-400 kg CO₂">200-400 kg CO₂</SelectItem>
+              <SelectItem value="400-600 kg CO₂">400-600 kg CO₂</SelectItem>
+              <SelectItem value="600-800 kg CO₂">600-800 kg CO₂</SelectItem>
+              <SelectItem value="More than 800 kg CO₂">More than 800 kg CO₂</SelectItem>
               <SelectItem value="Not sure">Not sure</SelectItem>
             </SelectContent>
           </Select>
