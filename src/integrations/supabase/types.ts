@@ -172,19 +172,20 @@ export type Database = {
       }
     }
     Views: {
-      survey_statistics: {
-        Row: {
-          avg_age: number | null
-          avg_carbon_footprint: number | null
-          avg_devices: number | null
-          states_represented: number | null
-          total_responses: number | null
-          unique_occupations: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_survey_statistics: {
+        Args: never
+        Returns: {
+          avg_age: number
+          avg_carbon_footprint: number
+          avg_devices: number
+          states_represented: number
+          total_responses: number
+          unique_occupations: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
