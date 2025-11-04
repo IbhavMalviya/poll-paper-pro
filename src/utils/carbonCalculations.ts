@@ -5,6 +5,7 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   let streamingCo2 = 0;
   let aiCo2 = 0;
   let chargingCo2 = 0;
+  let dataTransferCo2 = 0;
 
   // Device emissions calculation
   if (data.devices && data.devices.length > 0) {
@@ -81,6 +82,20 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   const cloudHours = cloudHoursMap[data.cloudServicesUsageHours || "None"] || 0;
   streamingCo2 += (cloudHours * 0.02) / 7; // kg CO2 per hour, weekly to daily
 
+  // Data transfers / uploads
+  const uploadsGbMap: Record<string, number> = {
+    "None": 0,
+    "Less than 10 GB": 5,
+    "10-50 GB": 30,
+    "50-100 GB": 75,
+    "100-500 GB": 300,
+    "More than 500 GB": 750,
+  };
+  
+  const uploadsGb = uploadsGbMap[data.uploadsPerMonthGb || "None"] || 0;
+  // 0.0025 kg CO2 per GB transferred (network + data center), monthly to daily
+  dataTransferCo2 += (uploadsGb * 0.0025) / 30;
+
   // AI emissions
   const aiInteractionsMap: Record<string, number> = {
     "None": 0,
@@ -152,12 +167,12 @@ export const calculateCarbonFootprint = (data: Partial<SurveyData>) => {
   const baseChargingCo2 = dailyDeviceCo2 * 0.2;
   chargingCo2 = baseChargingCo2 * chargingMultiplier * powerMultiplier * renewableReduction * energyEfficientReduction;
 
-  const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2;
+  const total = dailyDeviceCo2 + streamingCo2 + aiCo2 + chargingCo2 + dataTransferCo2;
 
   return {
     total,
     devices: dailyDeviceCo2,
-    streaming: streamingCo2,
+    streaming: streamingCo2 + dataTransferCo2, // Include data transfers with streaming
     ai: aiCo2,
     charging: chargingCo2,
   };
