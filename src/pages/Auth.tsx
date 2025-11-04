@@ -18,16 +18,33 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initAuth = async () => {
+      // Check if user is already logged in
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         navigate("/admin");
+        return;
       }
-    });
+
+      // Check if admin already exists
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("id")
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (!error) {
+        setAdminExists(!!data);
+        setIsLogin(!!data); // If admin exists, default to login
+      }
+    };
+
+    initAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -104,8 +121,9 @@ const Auth = () => {
 
         toast({
           title: "Success",
-          description: "Account created! You can now log in.",
+          description: "Account created! Please add admin role in the backend and log in.",
         });
+        setAdminExists(true);
         setIsLogin(true);
       }
     } catch (error) {
@@ -127,6 +145,19 @@ const Auth = () => {
     }
   };
 
+  // Wait until we check if admin exists
+  if (adminExists === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">Loading...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
@@ -135,7 +166,7 @@ const Auth = () => {
           <CardDescription>
             {isLogin
               ? "Enter your credentials to access the admin dashboard"
-              : "Sign up for an admin account"}
+              : "Sign up for the first admin account"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -169,15 +200,6 @@ const Auth = () => {
               {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
             </Button>
           </form>
-          <div className="mt-4 text-center">
-            <Button
-              variant="link"
-              onClick={() => setIsLogin(!isLogin)}
-              disabled={loading}
-            >
-              {isLogin ? "Need an account? Sign up" : "Already have an account? Login"}
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>
