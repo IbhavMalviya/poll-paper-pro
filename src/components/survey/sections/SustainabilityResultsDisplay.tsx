@@ -13,7 +13,8 @@ const SustainabilityResultsDisplay = ({ surveyData }: SustainabilityResultsDispl
   }
 
   const getFootprintAccuracy = (estimate: string) => {
-    const actualEstimate = parseFloat(surveyData.calculatedTotalCo2?.toString() || "0");
+    const dailyFootprint = parseFloat(surveyData.calculatedTotalCo2?.toString() || "0");
+    const actualEstimate = dailyFootprint * 365; // Convert daily to annual
     const estimateRanges: Record<string, [number, number]> = {
       "Less than 500 kg CO₂": [0, 500],
       "500-1000 kg CO₂": [500, 1000],
