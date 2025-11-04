@@ -26,10 +26,11 @@ const ChargingHabitsSection = ({ surveyData, updateData }: ChargingHabitsSection
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Charge overnight">Charge overnight</SelectItem>
-              <SelectItem value="Charge when needed">Charge when needed</SelectItem>
-              <SelectItem value="Keep plugged in">Keep plugged in 24/7</SelectItem>
-              <SelectItem value="Use power banks">Use power banks</SelectItem>
+              <SelectItem value="Charge overnight regularly">Charge overnight regularly</SelectItem>
+              <SelectItem value="Charge when battery is low (below 20%)">Charge when battery is low (below 20%)</SelectItem>
+              <SelectItem value="Keep devices plugged in most of the time">Keep devices plugged in most of the time</SelectItem>
+              <SelectItem value="Use fast charging frequently">Use fast charging frequently</SelectItem>
+              <SelectItem value="Charge multiple times a day">Charge multiple times a day</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -49,6 +50,7 @@ const ChargingHabitsSection = ({ surveyData, updateData }: ChargingHabitsSection
               <SelectItem value="Solar power">Solar power</SelectItem>
               <SelectItem value="Mixed (Grid + Solar)">Mixed (Grid + Solar)</SelectItem>
               <SelectItem value="Generator">Generator</SelectItem>
+              <SelectItem value="Inverter/UPS (Battery backup)">Inverter/UPS (Battery backup)</SelectItem>
             </SelectContent>
           </Select>
         </div>
