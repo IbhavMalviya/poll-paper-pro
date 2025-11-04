@@ -38,10 +38,11 @@ const Auth = () => {
         .eq("role", "admin")
         .maybeSingle();
 
-      if (!error) {
-        setAdminExists(!!data);
-        setIsLogin(!!data); // If admin exists, default to login
-      }
+      // If error (e.g., RLS blocking), default to login mode
+      // If no error and data exists, admin exists
+      const hasAdmin = !error && !!data;
+      setAdminExists(hasAdmin);
+      setIsLogin(true); // Always default to login
     };
 
     initAuth();
@@ -144,19 +145,6 @@ const Auth = () => {
       setLoading(false);
     }
   };
-
-  // Wait until we check if admin exists
-  if (adminExists === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Loading...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
