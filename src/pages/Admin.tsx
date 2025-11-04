@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, Database, TrendingUp } from "lucide-react";
+import { Download, Database, TrendingUp, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 interface SurveyResponse {
@@ -33,6 +34,7 @@ const Admin = () => {
     avgCO2: 0,
     avgDevices: 0
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchResponses();
@@ -48,6 +50,11 @@ const Admin = () => {
 
       if (error) {
         console.error('Error fetching responses:', error);
+        if (error.code === 'PGRST301') {
+          toast.error('Access denied. Admin privileges required.');
+          navigate('/auth');
+          return;
+        }
         toast.error('Failed to load survey responses');
         return;
       }
@@ -71,9 +78,16 @@ const Admin = () => {
     } catch (err) {
       console.error('Error:', err);
       toast.error('An error occurred while loading data');
+      navigate('/auth');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success('Logged out successfully');
+    navigate('/auth');
   };
 
   const exportToCSV = () => {
@@ -159,11 +173,19 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       <header className="bg-primary py-6 px-4 mb-8">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Database className="w-8 h-8" />
-            Survey Data Admin Dashboard
-          </h1>
-          <p className="text-white/80 mt-2">View and export carbon footprint survey responses</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                <Database className="w-8 h-8" />
+                Survey Data Admin Dashboard
+              </h1>
+              <p className="text-white/80 mt-2">View and export carbon footprint survey responses</p>
+            </div>
+            <Button onClick={handleLogout} variant="secondary" className="gap-2">
+              <LogOut className="w-4 h-4" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
