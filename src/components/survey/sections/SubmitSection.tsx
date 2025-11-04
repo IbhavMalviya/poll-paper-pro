@@ -189,7 +189,7 @@ const SubmitSection = ({ surveyData, updateData }: SubmitSectionProps) => {
           </Label>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-end">
+        <div className="flex flex-wrap gap-4 justify-between">
           <Button
             variant="outline"
             onClick={downloadJSON}
