@@ -117,7 +117,7 @@ const Index = () => {
         <div className="container mx-auto px-3 sm:px-4 text-center">
           <p className="text-xs sm:text-sm md:text-base text-muted-foreground flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
             <Leaf className="w-4 h-4 text-primary" />
-            <span>Made with care by IBHAV MALVIYA — this tool provides estimates; please validate emission factors before using results in research.</span>
+            <span>This tool provides estimates; please validate emission factors before using results in research.</span>
           </p>
         </div>
       </footer>
