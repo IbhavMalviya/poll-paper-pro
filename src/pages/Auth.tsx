@@ -13,8 +13,14 @@ const authSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }).max(100),
 });
 
+const emailSchema = z.object({
+  email: z.string().trim().email({ message: "Invalid email address" }).max(255),
+});
+
+type AuthMode = "login" | "signup" | "forgot-password";
+
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,7 +48,7 @@ const Auth = () => {
       // If no error and data exists, admin exists
       const hasAdmin = !error && !!data;
       setAdminExists(hasAdmin);
-      setIsLogin(true); // Always default to login
+      setMode("login"); // Always default to login
     };
 
     initAuth();
@@ -57,6 +63,51 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const validatedData = emailSchema.parse({ email });
+      const redirectUrl = `${window.location.origin}/auth`;
+
+      const { error } = await supabase.auth.resetPasswordForEmail(validatedData.email, {
+        redirectTo: redirectUrl,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Check your email",
+        description: "We've sent you a password reset link.",
+      });
+      setMode("login");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -65,7 +116,7 @@ const Auth = () => {
       // Validate input
       const validatedData = authSchema.parse({ email, password });
 
-      if (isLogin) {
+      if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({
           email: validatedData.email,
           password: validatedData.password,
@@ -92,7 +143,7 @@ const Auth = () => {
           title: "Success",
           description: "Logged in successfully",
         });
-      } else {
+      } else if (mode === "signup") {
         const redirectUrl = `${window.location.origin}/`;
         
         const { error } = await supabase.auth.signUp({
@@ -125,7 +176,7 @@ const Auth = () => {
           description: "Account created! Please add admin role in the backend and log in.",
         });
         setAdminExists(true);
-        setIsLogin(true);
+        setMode("login");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -146,48 +197,106 @@ const Auth = () => {
     }
   };
 
+  const getTitle = () => {
+    switch (mode) {
+      case "forgot-password":
+        return "Reset Password";
+      case "signup":
+        return "Create Admin Account";
+      default:
+        return "Admin Login";
+    }
+  };
+
+  const getDescription = () => {
+    switch (mode) {
+      case "forgot-password":
+        return "Enter your email to receive a password reset link";
+      case "signup":
+        return "Sign up for the first admin account";
+      default:
+        return "Enter your credentials to access the admin dashboard";
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>{isLogin ? "Admin Login" : "Create Admin Account"}</CardTitle>
-          <CardDescription>
-            {isLogin
-              ? "Enter your credentials to access the admin dashboard"
-              : "Sign up for the first admin account"}
-          </CardDescription>
+          <CardTitle>{getTitle()}</CardTitle>
+          <CardDescription>{getDescription()}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+          {mode === "forgot-password" ? (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending..." : "Send Reset Link"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setMode("login")}
                 disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                minLength={6}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
-            </Button>
-          </form>
+              >
+                Back to Login
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handleAuth} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="admin@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  minLength={6}
+                />
+              </div>
+              {mode === "login" && (
+                <Button
+                  type="button"
+                  variant="link"
+                  className="px-0 text-sm text-muted-foreground"
+                  onClick={() => setMode("forgot-password")}
+                  disabled={loading}
+                >
+                  Forgot password?
+                </Button>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Loading..." : mode === "login" ? "Login" : "Sign Up"}
+              </Button>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
